@@ -22,21 +22,14 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .anyRequest().authenticated();
         http
-                .formLogin()
-//                .loginPage("/loginPage")
-                .defaultSuccessUrl("/")
-                .failureForwardUrl("/login")
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .loginProcessingUrl("/login_proc")
-                .successHandler((request, response, authentication) -> {
-                    log.info("authentication: {}", authentication.getName());
-                    response.sendRedirect("/");
-                }).failureHandler((request, response, exception) -> {
-                    log.error("exception", exception);
-                    response.sendRedirect("/login");
-                })
-                .permitAll()
+                .formLogin();
+        http
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login")
+                .addLogoutHandler((request, response, authentication) -> request.getSession().invalidate())
+                .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/login"))
+                .deleteCookies("JSESSIONID", "remember-me")
         ;
         return http.build();
     }
