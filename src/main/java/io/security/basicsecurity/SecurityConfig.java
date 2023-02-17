@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated();
         http
                 .formLogin()
-                .loginPage("/loginPage")
+//                .loginPage("/loginPage")
                 .defaultSuccessUrl("/")
                 .failureForwardUrl("/login")
                 .usernameParameter("username")
