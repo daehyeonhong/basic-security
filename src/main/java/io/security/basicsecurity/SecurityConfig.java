@@ -37,8 +37,10 @@ public class SecurityConfig {
                 .rememberMeParameter("remember-me")
                 .tokenValiditySeconds(3_600)
                 .alwaysRemember(true)
-                .userDetailsService(this.userDetailsService)
-        ;
+                .userDetailsService(this.userDetailsService);
+        http.sessionManagement()
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(true);
         return http.build();
     }
 }
