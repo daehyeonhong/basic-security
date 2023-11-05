@@ -14,4 +14,9 @@ public class SecurityController {
         log.info("requestURL: {}, Agent: {}", request.getRequestURL(), request.getHeader(HttpHeaders.USER_AGENT));
         return "home";
     }
+
+    @GetMapping(value = "/loginPage")
+    public String loginPage() {
+        return "loginPage";
+    }
 }
