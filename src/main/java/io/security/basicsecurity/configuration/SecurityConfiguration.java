@@ -11,12 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.anyRequest().authenticated())
+        http
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.anyRequest().authenticated());
+
+        http
                 .formLogin(
                         httpSecurityFormLoginConfigurer ->
                                 httpSecurityFormLoginConfigurer
-//                                        .loginPage("/loginPage")
                                         .defaultSuccessUrl("/")
                                         .failureUrl("/login")
                                         .usernameParameter("userId")
@@ -33,7 +34,20 @@ public class SecurityConfiguration {
                                                 }
                                         )
                                         .permitAll()
-                )
-                .build();
+                );
+
+        http
+                .logout(
+                        httpSecurityLogoutConfigurer ->
+                                httpSecurityLogoutConfigurer
+                                        .logoutUrl("/logout")
+                                        .logoutSuccessUrl("/login")
+                                        .addLogoutHandler((request, response, authentication) -> request.getSession().invalidate())
+                                        .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/login"))
+                                        .deleteCookies("remember-me")
+                                        .permitAll()
+                );
+
+        return http.build();
     }
 }
