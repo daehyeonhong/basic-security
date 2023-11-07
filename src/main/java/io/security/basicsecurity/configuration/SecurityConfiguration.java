@@ -68,19 +68,12 @@ public class SecurityConfiguration {
                         {
                             httpSecuritySessionManagementConfigurer
                                     .invalidSessionUrl("/invalid")
-                                    .sessionFixation().changeSessionId();
-
-                            httpSecuritySessionManagementConfigurer
-                                    .invalidSessionUrl("/invalid");
-
-                            httpSecuritySessionManagementConfigurer
+                                    .sessionFixation().changeSessionId()
                                     .maximumSessions(1)
                                     .maxSessionsPreventsLogin(true)
                                     .expiredUrl("/expired");
-
                         }
-                )
-        ;
+                );
 
         return http.build();
     }
