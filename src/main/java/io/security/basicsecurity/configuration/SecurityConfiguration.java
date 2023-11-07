@@ -5,7 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Slf4j
@@ -15,9 +19,38 @@ public class SecurityConfiguration {
     private final UserDetailsService userDetailsService;
 
     @Bean
+    public static UserDetailsManager userDetailsManager() {
+        final UserDetails user = User.builder()
+                .username("user")
+                .password("{noop}1111")
+                .roles("USER")
+                .build();
+
+        final UserDetails sys = User.builder()
+                .username("sys")
+                .password("{noop}1111")
+                .roles("SYS")
+                .build();
+
+        final UserDetails admin = User.builder()
+                .username("admin")
+                .password("{noop}1111")
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(user, sys, admin);
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(final HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry.anyRequest().authenticated());
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+                        authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/user").hasRole("USER")
+                                .requestMatchers("/admin/pay").hasRole("ADMIN")
+                                .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SYS")
+                                .anyRequest().authenticated()
+                );
 
         http
                 .formLogin(
@@ -65,14 +98,12 @@ public class SecurityConfiguration {
         http
                 .sessionManagement(
                         httpSecuritySessionManagementConfigurer ->
-                        {
-                            httpSecuritySessionManagementConfigurer
-                                    .invalidSessionUrl("/invalid")
-                                    .sessionFixation().changeSessionId()
-                                    .maximumSessions(1)
-                                    .maxSessionsPreventsLogin(true)
-                                    .expiredUrl("/expired");
-                        }
+                                httpSecuritySessionManagementConfigurer
+                                        .invalidSessionUrl("/invalid")
+                                        .sessionFixation().changeSessionId()
+                                        .maximumSessions(1)
+                                        .maxSessionsPreventsLogin(true)
+                                        .expiredUrl("/expired")
                 );
 
         return http.build();

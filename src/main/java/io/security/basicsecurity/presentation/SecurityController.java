@@ -12,11 +12,24 @@ public class SecurityController {
     @GetMapping(value = "/")
     public String index(final HttpServletRequest request) {
         log.info("requestURL: {}, Agent: {}", request.getRequestURL(), request.getHeader(HttpHeaders.USER_AGENT));
-        return "home";
+        return "ħømê";
     }
 
-    @GetMapping(value = "/loginPage")
-    public String loginPage() {
-        return "loginPage";
+    @GetMapping(value = "/user")
+    public String user(final HttpServletRequest request) {
+        log.info("requestURL: {}, Agent: {}", request.getRequestURL(), request.getHeader(HttpHeaders.USER_AGENT));
+        return "ùşêř";
+    }
+
+    @GetMapping(value = "/admin/pay")
+    public String adminPay(final HttpServletRequest request) {
+        log.info("requestURL: {}, Agent: {}", request.getRequestURL(), request.getHeader(HttpHeaders.USER_AGENT));
+        return "àďmĩň pāÿ";
+    }
+
+    @GetMapping(value = "/admin/**")
+    public String admin(final HttpServletRequest request) {
+        log.info("requestURL: {}, Agent: {}", request.getRequestURL(), request.getHeader(HttpHeaders.USER_AGENT));
+        return "àďmĩň";
     }
 }
