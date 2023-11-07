@@ -62,6 +62,26 @@ public class SecurityConfiguration {
                                         .userDetailsService(this.userDetailsService)
                 );
 
+        http
+                .sessionManagement(
+                        httpSecuritySessionManagementConfigurer ->
+                        {
+                            httpSecuritySessionManagementConfigurer
+                                    .invalidSessionUrl("/invalid")
+                                    .sessionFixation().changeSessionId();
+
+                            httpSecuritySessionManagementConfigurer
+                                    .invalidSessionUrl("/invalid");
+
+                            httpSecuritySessionManagementConfigurer
+                                    .maximumSessions(1)
+                                    .maxSessionsPreventsLogin(true)
+                                    .expiredUrl("/expired");
+
+                        }
+                )
+        ;
+
         return http.build();
     }
 }
