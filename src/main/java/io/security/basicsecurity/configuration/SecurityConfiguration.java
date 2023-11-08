@@ -108,9 +108,9 @@ public class SecurityConfiguration {
                                 httpSecuritySessionManagementConfigurer
                                         .invalidSessionUrl("/invalid")
                                         .sessionFixation().changeSessionId()
-                                        .maximumSessions(1)
-                                        .maxSessionsPreventsLogin(true)
-                                        .expiredUrl("/expired")
+//                                        .maximumSessions(1)
+//                                        .maxSessionsPreventsLogin(true)
+//                                        .expiredUrl("/expired")
                 );
 
         http
