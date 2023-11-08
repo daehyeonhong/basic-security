@@ -32,4 +32,10 @@ public class SecurityController {
         log.info("requestURL: {}, Agent: {}", request.getRequestURL(), request.getHeader(HttpHeaders.USER_AGENT));
         return "àďmĩň";
     }
+
+    @GetMapping(value = "/login")
+    public String login(final HttpServletRequest request) {
+        log.info("requestURL: {}, Agent: {}", request.getRequestURL(), request.getHeader(HttpHeaders.USER_AGENT));
+        return "login";
+    }
 }

@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 @Slf4j
 @Configuration
@@ -46,6 +49,7 @@ public class SecurityConfiguration {
         http
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/login").permitAll()
                                 .requestMatchers("/user").hasRole("USER")
                                 .requestMatchers("/admin/pay").hasRole("ADMIN")
                                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SYS")
@@ -63,7 +67,10 @@ public class SecurityConfiguration {
                                         .loginProcessingUrl("/login_proc")
                                         .successHandler((request, response, authentication) -> {
                                             log.info("authentication: {}", authentication.getName());
-                                            response.sendRedirect("/");
+                                            final RequestCache requestCache = new HttpSessionRequestCache();
+                                            final SavedRequest savedRequest = requestCache.getRequest(request, response);
+                                            final String redirectUrl = savedRequest.getRedirectUrl();
+                                            response.sendRedirect(redirectUrl);
                                         })
                                         .failureHandler(
                                                 (request, response, exception) -> {
@@ -104,6 +111,14 @@ public class SecurityConfiguration {
                                         .maximumSessions(1)
                                         .maxSessionsPreventsLogin(true)
                                         .expiredUrl("/expired")
+                );
+
+        http
+                .exceptionHandling(
+                        httpSecurityExceptionHandlingConfigurer ->
+                                httpSecurityExceptionHandlingConfigurer
+//                                        .authenticationEntryPoint((request, response, authException) -> response.sendRedirect("/login"))
+                                        .accessDeniedHandler((request, response, accessDeniedException) -> response.sendRedirect("/denied"))
                 );
 
         return http.build();
